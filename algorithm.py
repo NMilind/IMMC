@@ -1,1 +1,4 @@
-# This will run the algorithm
+import datahandler;
+
+if __name__ == "__main__":
+    pass;
