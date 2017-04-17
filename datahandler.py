@@ -20,7 +20,7 @@ if not os.path.isfile("data/processed.zone.csv"):
             data[int(row[0])]["Address"] = row[2].split("/")[1] + ", " + row[2].split("/")[0];
 
     geolocator = Nominatim()
-    googleAPI = GoogleV3(api_key="AIzaSyAUcTeRzAOEn5_Siu4YPvE1SPc0aVCgAGw");
+    googleAPI = GoogleV3(api_key="AIzaSyAQAiLktW0gJ9COS2stDmxuc_dZRCzcf-k");
 
     for key in data:
         print(data[key]);

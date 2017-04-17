@@ -36,7 +36,7 @@ rank_locations = dict();
 if __name__ == "__main__":
 
     geolocator = Nominatim()
-    googleAPI = GoogleV3(api_key="AIzaSyAUcTeRzAOEn5_Siu4YPvE1SPc0aVCgAGw");
+    googleAPI = GoogleV3(api_key="AIzaSyAQAiLktW0gJ9COS2stDmxuc_dZRCzcf-k");
 
     for key in members:
         location = geolocator.geocode(members[key]["Address"]);

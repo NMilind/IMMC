@@ -4,6 +4,7 @@ from geopy.geocoders import Nominatim;
 from geopy.geocoders import GoogleV3;
 from datetime import datetime;
 from geopy.distance import vincenty;
+from geopy.distance import great_circle;
 import math;
 import operator;
 import random;
@@ -40,17 +41,17 @@ def generate(members):
     rank_locations = dict();
 
     geolocator = Nominatim()
-    googleAPI = GoogleV3(api_key="AIzaSyAUcTeRzAOEn5_Siu4YPvE1SPc0aVCgAGw");
+    googleAPI = GoogleV3(api_key="AIzaSyAQAiLktW0gJ9COS2stDmxuc_dZRCzcf-k");
 
-    for key in members:
-        location = geolocator.geocode(members[key]["Address"]);
-        coordinates = (location.latitude, location.longitude);
-        timezone = googleAPI.timezone(coordinates, at_time=time);
-        date_at_location = datetime.now(timezone);
-        utc = date_at_location.utcoffset().total_seconds() / 60 / 60;
-        members[key]["Latitude"] = location.latitude;
-        members[key]["Longitude"] = location.longitude;
-        members[key]["Offset"] = utc;
+    #for key in members:
+    #    location = geolocator.geocode(members[key]["Address"]);
+    #    coordinates = (location.latitude, location.longitude);
+    #    timezone = googleAPI.timezone(coordinates, at_time=time);
+    #    date_at_location = datetime.now(timezone);
+    #    utc = date_at_location.utcoffset().total_seconds() / 60 / 60;
+    #    members[key]["Latitude"] = location.latitude;
+    #    members[key]["Longitude"] = location.longitude;
+    #    members[key]["Offset"] = utc;
 
     for key in tzd:
         conf_coordinates = (float(tzd[key]["Latitude"]), float(tzd[key]["Longitude"]));
@@ -59,7 +60,7 @@ def generate(members):
         travelCost = 0;
         for mem_key in members:
             coordinates = (float(members[mem_key]["Latitude"]), float(members[mem_key]["Longitude"]));
-            distance = vincenty(coordinates, conf_coordinates).miles;
+            distance = vincenty(coordinates, conf_coordinates, iterations=100).miles;
             dJ = members[mem_key]["Offset"] - tzd[key]["Offset"];
 
             P = min(10, 10 + (6 * math.cos((math.pi * dJ / 12) - (math.pi / 24))));
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     for key in tzd:
         histogram_data[tzd[key]["Zone.Name"]] = 0;
 
-    iters = 350;
+    iters = 1000;
     i = 0;
     while i < iters:
         try:
@@ -95,11 +96,17 @@ if __name__ == "__main__":
                 id = random.randint(0, 281);
                 members[k] = dict();
                 members[k]["Address"] = list(tzd.values())[id]["Address"]
+                members[k]["Latitude"] = list(tzd.values())[id]["Latitude"]
+                members[k]["Longitude"] = list(tzd.values())[id]["Longitude"]
+                members[k]["Offset"] = list(tzd.values())[id]["Offset"]
             generate(members);
             i += 1;
-            print(i);
-        except:
-            continue;
+            print("Iteration: %s, Iterations: %s" % (i, iters));
+        except KeyboardInterrupt:
+            exit();
+        #except:
+        #    print("Iteration: %s, Iterations: %s" % (i, iters));
+        #    continue;
 
     with open("data/histogram.csv", "w", newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
