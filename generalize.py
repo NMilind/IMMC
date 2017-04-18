@@ -12,17 +12,17 @@ import csv;
 
 C_EARTH = 24901;
 
-members = {
-    0: { "Address": "Boston, Massachusetts, United States of America" },
-    1: { "Address": "Singapore, Republic of Singapore" },
-    2: { "Address": "Beijing, China" },
-    3: { "Address": "Hong Kong, China" },
-    4: { "Address": "Moscow, Russia" },
-    5: { "Address": "Utrecht, Netherlands" },
-    6: { "Address": "Warsaw, Poland" },
-    7: { "Address": "Copenhagen, Denmark" },
-    8: { "Address": "Melbourne, Australia" }
-};
+# members = {
+#     0: { "Address": "Boston, Massachusetts, United States of America" },
+#     1: { "Address": "Singapore, Republic of Singapore" },
+#     2: { "Address": "Beijing, China" },
+#     3: { "Address": "Hong Kong, China" },
+#     4: { "Address": "Moscow, Russia" },
+#     5: { "Address": "Utrecht, Netherlands" },
+#     6: { "Address": "Warsaw, Poland" },
+#     7: { "Address": "Copenhagen, Denmark" },
+#     8: { "Address": "Melbourne, Australia" }
+# };
 
 members = {
     0: { "Address": "Monterey, California, United States" },
@@ -87,26 +87,51 @@ if __name__ == "__main__":
     for key in tzd:
         histogram_data[tzd[key]["Zone.Name"]] = 0;
 
-    iters = 1000;
-    i = 0;
-    while i < iters:
-        try:
-            members = dict();
-            for k in range(10):
-                id = random.randint(0, 281);
-                members[k] = dict();
-                members[k]["Address"] = list(tzd.values())[id]["Address"]
-                members[k]["Latitude"] = list(tzd.values())[id]["Latitude"]
-                members[k]["Longitude"] = list(tzd.values())[id]["Longitude"]
-                members[k]["Offset"] = list(tzd.values())[id]["Offset"]
-            generate(members);
-            i += 1;
-            print("Iteration: %s, Iterations: %s" % (i, iters));
-        except KeyboardInterrupt:
-            exit();
-        #except:
-        #    print("Iteration: %s, Iterations: %s" % (i, iters));
-        #    continue;
+    GDPSum = 0;
+    weights = [];
+    for key in tzd:
+        GDPSum += tzd[key]["GDP"];
+    GDPWeights = 0;
+    for key in tzd:
+        GDPWeights += tzd[key]["GDP"];
+        weights.append(GDPWeights / GDPSum);
+
+    for i in range(1000):
+        members = dict();
+        for k in range(10):
+            rnd = random.random();
+            for j in range(len(weights) - 1):
+                if rnd > weights[j] and rnd < weights[j+1]:
+                    mmbr = list(tzd.values())[j];
+                    members[k] = dict();
+                    members[k]["Address"] = mmbr["Address"];
+                    members[k]["Latitude"] = mmbr["Latitude"];
+                    members[k]["Longitude"] = mmbr["Longitude"];
+                    members[k]["Offset"] = mmbr["Offset"];
+        generate(members);
+        print("Iteration: %s, %s" % (i, members));
+        pass;
+
+    # iters = 1000;
+    # i = 0;
+    # while i < iters:
+    #     try:
+    #         members = dict();
+    #         for k in range(10):
+    #             id = random.randint(0, 281);
+    #             members[k] = dict();
+    #             members[k]["Address"] = list(tzd.values())[id]["Address"]
+    #             members[k]["Latitude"] = list(tzd.values())[id]["Latitude"]
+    #             members[k]["Longitude"] = list(tzd.values())[id]["Longitude"]
+    #             members[k]["Offset"] = list(tzd.values())[id]["Offset"]
+    #         generate(members);
+    #         i += 1;
+    #         print("Iteration: %s, Iterations: %s" % (i, iters));
+    #     except KeyboardInterrupt:
+    #         exit();
+    #     #except:
+    #     #    print("Iteration: %s, Iterations: %s" % (i, iters));
+    #     #    continue;
 
     with open("data/histogram.csv", "w", newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)

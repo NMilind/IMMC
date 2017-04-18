@@ -6,6 +6,7 @@ from datetime import datetime;
 from geopy.distance import vincenty;
 
 time = datetime.strptime("Jan 1 2017", "%b %d %Y");
+#time = datetime.strptime("Jun 15 2017", "%b %d %Y");
 
 data = dict()
 
@@ -54,7 +55,10 @@ if not os.path.isfile("data/processed.zone.csv"):
                 ]);
             except:
                 continue;
-
+    with open("data/gdp.csv") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"');
+        for row in reader:
+            data[int(row[0])]["GDP"] = float(row[3]);
 else:
     with  open("data/processed.zone.csv") as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"');
@@ -67,6 +71,10 @@ else:
             data[int(row[0])]["Latitude"] = float(row[4])
             data[int(row[0])]["Longitude"] = float(row[5])
             data[int(row[0])]["Offset"] = float(row[6])
+    with open("data/gdp.csv") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"');
+        for row in reader:
+            data[int(row[0])]["GDP"] = float(row[3]);
 
 #with open("data/processed.timezone.csv", newline='') as csvfile:
 #    reader = csv.reader(csvfile, delimiter=',', quotechar='"');
@@ -87,3 +95,4 @@ else:
 #        timezone[row[4]].append(row_add);
 
 print("Loaded Timezone Data");
+print(data);

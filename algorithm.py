@@ -9,26 +9,28 @@ import operator;
 
 C_EARTH = 24901;
 
+members = {
+    0: { "Address": "Boston, Massachusetts, United States of America" },
+    1: { "Address": "Boston, Massachusetts, United States of America" },
+    2: { "Address": "Singapore, Republic of Singapore" },
+    3: { "Address": "Beijing, China" },
+    4: { "Address": "Hong Kong, China" },
+    5: { "Address": "Hong Kong, China" },
+    6: { "Address": "Moscow, Russia" },
+    7: { "Address": "Utrecht, Netherlands" },
+    8: { "Address": "Warsaw, Poland" },
+    9: { "Address": "Copenhagen, Denmark" },
+    10: { "Address": "Melbourne, Australia" }
+};
+#
 # members = {
-#     0: { "Address": "Boston, Massachusetts, United States of America" },
-#     1: { "Address": "Singapore, Republic of Singapore" },
-#     2: { "Address": "Beijing, China" },
-#     3: { "Address": "Hong Kong, China" },
-#     4: { "Address": "Moscow, Russia" },
-#     5: { "Address": "Utrecht, Netherlands" },
-#     6: { "Address": "Warsaw, Poland" },
-#     7: { "Address": "Copenhagen, Denmark" },
-#     8: { "Address": "Melbourne, Australia" }
+#     0: { "Address": "Monterey, California, United States" },
+#     1: { "Address": "Zutphen, Netherlands" },
+#     2: { "Address": "Melbourne, Australia" },
+#     3: { "Address": "Shanghai, China" },
+#     4: { "Address": "Hong Kong, China" },
+#     5: { "Address": "Moscow, Russia" }
 # };
-
-#members = {
-#    0: { "Address": "Monterey, California, United States" },
-#    1: { "Address": "Zutphen, Netherlands" },
-#    2: { "Address": "Melbourne, Australia" },
-#    3: { "Address": "Shanghai, China" },
-#    4: { "Address": "Hong Kong, China" },
-#    5: { "Address": "Moscow, Russia" }
-#};
 
 locations = dict();
 rank_locations = dict();
@@ -65,7 +67,10 @@ if __name__ == "__main__":
 
             travelCost += distance * 0.11 + 50;
 
-        D = (C_EARTH * math.sqrt(len(members))) / (2 * math.sqrt(dSum));
+        if dSum != 0:
+            D = (C_EARTH * math.sqrt(len(members))) / (2 * math.sqrt(dSum));
+        else:
+            D = float("inf");
         J = math.sqrt((1 / len(members)) * pSum);
         L = 450 * len(members);
         M = travelCost + L;
@@ -77,3 +82,17 @@ if __name__ == "__main__":
     ranked = sorted(rank_locations.items(), key=operator.itemgetter(1));
     for tup in ranked:
         print(str(tup[0]) + str(locations[tup[0]]));
+
+    for key in tzd:
+        if tzd[key]["Zone.Name"] == "Asia/Irkutsk":
+            print("Asia/Ikutsk Pm Values");
+            for mem_key in members:
+                dJ = members[mem_key]["Offset"] - tzd[key]["Offset"];
+                P = min(10, 10 + (6 * math.cos((math.pi * dJ / 12) - (math.pi / 24))));
+                print("%s: %s" % (members[mem_key]["Address"], P));
+        if tzd[key]["Zone.Name"] == "Europe/Samara":
+            print("Asia/Samara Pm Values");
+            for mem_key in members:
+                dJ = members[mem_key]["Offset"] - tzd[key]["Offset"];
+                P = min(10, 10 + (6 * math.cos((math.pi * dJ / 12) - (math.pi / 24))));
+                print("%s: %s" % (members[mem_key]["Address"], P));
